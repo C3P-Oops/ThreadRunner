@@ -33,6 +33,9 @@ public class ThreadRunner {
         int threadsUsed = 1;                // Defaulted to 1 to limit output
         long iterations = 1000;             // Defaulted to 1,000 to limit output
         boolean isSynchronized = false;     // Defaulted to false to allow collisions
+        String syncString = "";
+        int cores = Runtime.getRuntime().availableProcessors();
+
 
 //  start, end, and elapsed times are all default to longs
 //  totalCycles and collisions as longs to avoid overrunning the bounds of int (long max > 9q)
@@ -109,8 +112,12 @@ public class ThreadRunner {
                     //todo target a method rather than set the boolean
                     if (command.value == 0) {
                         isSynchronized = false;
+                        syncString = "unsynchronized";
+
                     } else if (command.value == 1) {
                         isSynchronized = true;
+                        syncString = "synchronized";
+
                     } else {
                         throw new InvalidSyntaxException("num value for synchronization may " +
                                 "only be 0 or 1. Exiting...");
@@ -124,9 +131,9 @@ public class ThreadRunner {
 
         totalCycles = threadsUsed * iterations;
 
-//  Does the user really want this many? Confirm.
-        if (totalCycles > 2000000000) {
-            String userInput = null;
+//  Does the user really want this many? Confirm when non-synchronized cycles > 2b or synchronized cycles > 10m
+        if ((totalCycles > 2000000000 && !isSynchronized) || (totalCycles > 10000000 && isSynchronized)) {
+            String userInput;
             System.out.printf("Dude...that's %,d total cycles! That's a lot! Are you sure? [y/n] ", totalCycles);
             Scanner input = new Scanner(System.in);
             userInput = input.next();
@@ -137,12 +144,13 @@ public class ThreadRunner {
                     System.out.println("When this baby hits 88 miles per hour, you're going to see some serious shit!");
                 } else {
                     System.out.println("Sorry. Please try again with a smaller request.");
+                    System.exit(0);
                 }
             }
         }
 
-        System.out.printf("Running %d threads in %,d iterations. Synchronized=%b%n%n",
-                threadsUsed, iterations, isSynchronized);
+        System.out.printf("Running %d threads in %,d %s iterations.%n%n",
+                threadsUsed, iterations, syncString);
 
 //  Setting up an instance of the TargetObject class with the iterator methods for the threads to target
         TargetObject target = new TargetObject();
@@ -150,11 +158,17 @@ public class ThreadRunner {
 //  Create user-defined quantity of threads
         for (int i = 0; i < threadsUsed; i++) {
             long finalIterations = iterations;
+            boolean finalIsSynchronized = isSynchronized;
             Thread newThread = new Thread(new Runnable() {
+
                 @Override
                 public void run() {
                     for (int i = 0; i < finalIterations; i++) {
-                        target.nonSyncIncrement();
+                        if (!finalIsSynchronized) {
+                            target.nonSyncIncrement();
+                        } else {
+                            target.syncIncrement();
+                        }
                     }
                 }
             });
@@ -179,10 +193,10 @@ public class ThreadRunner {
         elapsedTime = (int) (endTime - startTime);
         collisions = totalCycles - target.counter;
 
-        System.out.printf("Ran %,d total cycles in %,d ms, and encountered %,d collisions.%n",
-                totalCycles, elapsedTime, collisions);
-        System.out.printf("Delimited format: %d, %d, %d",
-                totalCycles, elapsedTime, collisions);
+        System.out.printf("Ran %,d total %s cycles in %,d ms, and encountered %,d collisions using %d cores.%n",
+                totalCycles, syncString, elapsedTime, collisions, cores);
+        System.out.printf("Delimited format:%nTotal Cycles, Sync, Elapsed Time, Collisions, CPU Cores%n%d, %s, %d, %d, %d",
+                totalCycles, syncString, elapsedTime, collisions, cores);
     }
 }
 
