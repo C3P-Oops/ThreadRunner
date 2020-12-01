@@ -1,8 +1,8 @@
 public class Command {
     String key;
-    int value;
+    long value;
 
-    Command(String key, int value) {
+    Command(String key, long value) {
         this.key = key.substring(1);                                // use right single letter as key
         this.value = value;
     }

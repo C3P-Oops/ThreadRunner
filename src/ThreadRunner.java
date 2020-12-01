@@ -29,13 +29,12 @@ public class ThreadRunner {
 
 //  Main variable fields for the main method
         String key = null;
-        int value = 0;
-        int threadsUsed = 1;                // Defaulted to 1 to limit output
+        long value = 0;
+        long threadsUsed = 1;                // Defaulted to 1 to limit output
         long iterations = 1000;             // Defaulted to 1,000 to limit output
         boolean isSynchronized = false;     // Defaulted to false to allow collisions
         String syncString = "";
         int cores = Runtime.getRuntime().availableProcessors();
-
 
 //  start, end, and elapsed times are all default to longs
 //  totalCycles and collisions as longs to avoid overrunning the bounds of int (long max > 9q)
@@ -66,7 +65,7 @@ public class ThreadRunner {
                 } else {
 
 //  Assign value, ensuring the value is an integer. Throw NumberFormatException at fail.
-                    value = Integer.parseInt(args[i + 1]);
+                    value = Long.parseLong(args[i + 1]);
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Improper number format. Enter only integers. Exiting...");
@@ -149,7 +148,7 @@ public class ThreadRunner {
             }
         }
 
-        System.out.printf("Running %d threads in %,d %s iterations.%n%n",
+        System.out.printf("%nRunning %d threads in %,d %s iterations.%n%n",
                 threadsUsed, iterations, syncString);
 
 //  Setting up an instance of the TargetObject class with the iterator methods for the threads to target
@@ -190,13 +189,16 @@ public class ThreadRunner {
 
 //  Stop the timer, calculate, and output results.
         endTime = System.currentTimeMillis();
+
         elapsedTime = (int) (endTime - startTime);
         collisions = totalCycles - target.counter;
 
-        System.out.printf("Ran %,d total %s cycles in %,d ms, and encountered %,d collisions using %d cores.%n",
-                totalCycles, syncString, elapsedTime, collisions, cores);
-        System.out.printf("Delimited format:%nTotal Cycles, Sync, Elapsed Time, Collisions, CPU Cores%n%d, %s, %d, %d, %d",
-                totalCycles, syncString, elapsedTime, collisions, cores);
+        System.out.printf("Ran %,d total %s cycles on %d threads in %,d ms," +
+                        " and encountered %,d collisions using %d cores.%n%n",
+                        totalCycles, syncString, threadsUsed, elapsedTime, collisions, cores);
+        System.out.printf("Delimited format:%nTotal Cycles, Sync, Threads, Elapsed Time, Collisions, CPU Cores%n" +
+                        "%d, %s, %d, %d, %d, %d",
+                        totalCycles, syncString, threadsUsed, elapsedTime, collisions, cores);
     }
 }
 
