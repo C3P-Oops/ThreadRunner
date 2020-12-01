@@ -9,23 +9,51 @@ import java.util.Scanner;
 public class ThreadRunner {
 
 //  Offers a printed help menu for users when they enter improper variables.
+
+    /**
+     * A help menu triggered by the user entering -help as a command line argument
+     * .@param version Indicates which Java version is used.        **(deprecated)**
+     * Implemented version, as I'm working in JDK 15, and block quotes were previewed in JSE 13, implemented in 15
+     * Using them here for practice, at the expense of lengthy, duplicate code
+     */
     public static void printHelp() {
-        System.out.println("\n" +
-                "ThreadRunner runs multiple threads with the option to cause and capture collision counts by\n" +
-                "incrementing an integer concurrently.\n\n" +
-                "Syntax:\n" +
-                "ThreadRunner [-t num] [-i num] [-s num]\n" +
-                "num represents any nonzero integer for -t and -i\n\n" +
-                "-t num\t\tCreates num threads to run concurrent operations.\n" +
-                "-i num\t\tSpecifies that each thread will iterate the integer num times.\n" +
-                "-s num\t\tSpecifies whether the method called is synchronized (0 = non-synchronized, 1 = synchronized)" +
-                "\n\n" +
-                "CAUTION: RUNNING HIGH QUANTITIES OF THREADS AND/OR ITERATIONS MAY UNDESIRABLY LOAD YOUR CPU\n" +
-                "Tested maximums were 1 billion total operations.");
+//  todo comment out for JSE 15
+//        System.out.println("\n" +
+//            "ThreadRunner runs multiple threads with the option to cause and capture collision counts by\n" +
+//            "incrementing an integer concurrently.\n\n" +
+//            "Syntax:\n" +
+//            "ThreadRunner [-t num] [-i num] [-s num]\n" +
+//            "num represents any nonzero integer for -t and -i\n\n" +
+//            "-t num    Creates num threads to run concurrent operations.\n" +
+//            "-i num    Specifies that each thread will iterate the integer num times.\n" +
+//            "-s num    Specifies whether the method called is synchronized (0 = non-synchronized, 1 = synchronized)" +
+//            "\n\n" +
+//            "CAUTION: RUNNING HIGH QUANTITIES OF THREADS AND/OR ITERATIONS MAY UNDESIRABLY LOAD YOUR CPU\n" +
+//            "Tested maximums were 100 billion total operations.");
+
+//  todo comment out for JSE < 15
+        System.out.println("""
+            
+            ThreadRunner runs multiple threads with the option to cause and capture collision counts by
+            incrementing an integer concurrently.
+            
+            Syntax:
+            ThreadRunner [-t num] [-i num] [-s num]
+            num represents any nonzero integer for -t and -i
+            
+            -t num    Creates num threads to run concurrent operations.
+            -i num    Specifies that each thread will iterate the integer num times.
+            -s num    Specifies whether the method called is synchronized (0 = non-synchronized, 1 = synchronized)
+            
+            CAUTION: RUNNING HIGH QUANTITIES OF THREADS AND/OR ITERATIONS MAY UNDESIRABLY LOAD YOUR CPU
+            Tested maximums were 100 billion total operations."""); // I kinda like that...
+
     }
 
 //  Main method
     public static void main(String[] args) throws InvalidSyntaxException, InterruptedException {
+        @Deprecated
+        int version = Integer.parseInt(System.getProperty("java.version").split("\\.")[0]);
 
 //  Main variable fields for the main method
         String key = null;
